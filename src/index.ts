@@ -1,21 +1,24 @@
+import  mongoose from 'mongoose'
 import express from 'express'
 import bodyParser from 'body-parser'
-import { authorRouter } from './controllers/authorController'
-import { bookRouter } from './controllers/bookController';
+import {ActorRouter} from './controllers/ActorController';
+import {DirectorRouter} from './controllers/DirectorController';
+import { SerieRouter } from './controllers/SerieController';
 
-const port = process.env.port || 1337
 
-const app = express()
-app.use(bodyParser.urlencoded({extended: false}))
-app.use(bodyParser.json())
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost:27017/Series' ,{useNewUrlParser: true})
+.then(()=>{
+    console.log("Connection success");
+}).catch(error=> console.log ("Connection Failed "+ error));
 
-app.use('/authors', authorRouter)
-app.use('/books',bookRouter)
+const connection = express();
+connection.use(bodyParser.urlencoded({extended: false}));
+connection.use(bodyParser.json());
 
-app.get('/', (req, res)=> {
-    res.send("API is running OK")
-})
 
-app.listen(port, ()=> {
-    console.log('App is running in port: ' + port)
-})
+connection.use('/Actor',ActorRouter);
+connection.use('/Director',DirectorRouter);
+connection.use('/Serie',SerieRouter);
+
+
